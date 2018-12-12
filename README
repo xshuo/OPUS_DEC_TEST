@@ -3,5 +3,14 @@ This is for Sogou C1 Opus File Decoder.
 
 NO LICENSE
 
+[How to build]
+cd xxx //the folder has the child node<.git>
+mkdir build
+cd build
+cmake ..
+make
+
+--then you will find a bin file in build/bin/ named C1_OPUS_DEC
+
 [How to use]
 C1_OPUS_DEC --help
