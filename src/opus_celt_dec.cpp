@@ -28,14 +28,16 @@ static void show_help(const char* cmd) {
     fprintf(stderr, "Usage: %s [options]\n", cmd);
 
     fprintf(stderr, "options include:\n"
-            " -I <input file path>\n"
-            " -O <output file path>\n"
-            " -C [<channels>] 1 or 2, default is 2\n"
-            " -D [<log file>] default is stderr\n");
+            "  -I <input file path>\n"
+            "  -O <output file path>\n"
+            "  -C [<channels>] 1 or 2, default is 2\n"
+            "  -D [<log file>] default is stderr\n");
+    fprintf(stderr, "\n\n");
+    fprintf(stderr, "Mandatory options are <-I> <-O>\n");
     fprintf(stderr, "full command like this:\n"
-            "C1_OPUS_DEC -I ~/1.avc -O ~/1.pcm\n"
+            "  C1_OPUS_DEC -I ~/1.avc -O ~/1.pcm\n"
             "full debug command like this: \n"
-            "C1_OPUS_DEC -I ~/1.avc -O ~/1.pcm -D ~/1.log\n");
+            "  C1_OPUS_DEC -I ~/1.avc -O ~/1.pcm -D ~/1.log\n");
 }
 
 int main(int argc, char *argv[]) {
