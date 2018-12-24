@@ -16,13 +16,13 @@ extern "C" {
 #endif
 
 static bool XDEBUG = false;
-static bool XXDEBUG = false;
+static bool XXDEBUG = true;
 
 static int kSamplesPerFrame = 320;//20ms 16K
 static int kChannels = 2;
 static int kBitsPerSample = 16;
-static int kOutputBufferSize = kSamplesPerFrame * kBitsPerSample / 8 * kChannels; //1280
-static int kInputBufferSize = 160; //base encoder
+static int kOutputBufferSize = 2 * kSamplesPerFrame * kBitsPerSample / 8 * kChannels; //1280
+static int kInputBufferSize = 2 * 160; //base encoder
 
 static void show_help(const char* cmd) {
     fprintf(stderr, "Usage: %s [options]\n", cmd);
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
         //fread do not get any byte, then feof return true;
         if (bytesRead == 0)//:(:(:( end of the file
             break;
-        if (bytesRead < kInputBufferSize) {
+        if (bytesRead < 160) {
             if (ferror(fpInput)) {
                 if (errno == EINTR) {
                     //rewrite th position and retry
@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
         int decRet = AVC_DEC_CM4_16K_C1_F320_proc(
                 inputBuf,
                 outputBuf,
-                kInputBufferSize,
+                bytesRead,
                 opus_custom_dec);
         fwrite(outputBuf, sizeof(short), decRet * kChannels, fpOutput);
         if (XXDEBUG)
