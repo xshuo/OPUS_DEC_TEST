@@ -144,8 +144,10 @@ void* decode_thread(void* args) {
         fwrite(outputBuf, sizeof(short), decRet * kChannels, fpOutput);
         debug_decode_frame++;
 
-        fprintf(stdout, "%s:decode frame(%d): %d->%d\n",
-                thread_name, debug_decode_frame, bytesRead, decRet * kChannels * 2);
+        if (XDEBUG) {
+            fprintf(stdout, "%s:decode frame(%d): %d->%d\n",
+                    thread_name, debug_decode_frame, bytesRead, decRet * kChannels * 2);
+        }
 
         p->r_len -= bytesRead;
         if (!p->r_len) break;
@@ -202,7 +204,7 @@ int main(int argc, char *argv[]) {
         } else if (!strcmp(*argv, "-D")) {
             argv++;
             if (*argv) logFiltPath = *argv;
-        } else if (!(strcmp(*argv, "-XD"))) {
+        } else if (!(strcmp(*argv, "-DD"))) {
             XDEBUG = true;
         }
         if (*argv) argv++;
@@ -244,8 +246,7 @@ int main(int argc, char *argv[]) {
         (file_len % kFrameBytesPerThread > 0 ? 1 : 0);
     fprintf(stderr, "decode thread count: %d\n", thread_cnt);
 
-    if (XDEBUG)
-        gettimeofday(&d_dec_start, NULL);
+    gettimeofday(&d_dec_start, NULL);
     fprintf(stderr, "start decode %s:%ld\n", inputFilePath, file_len);
     CountDownLatch latch(thread_cnt);
 
@@ -272,12 +273,10 @@ int main(int argc, char *argv[]) {
     latch.wait();
     delete [] thread_args;
     fprintf(stderr, "end decode %s output file is %s\n", inputFilePath, outputFilePath);
-    if (XDEBUG) {
-        gettimeofday(&d_dec_end, NULL);
-        //fprintf(stdout, "%ld %ld %ld %ld \n", d_dec_start.tv_sec, d_dec_start.tv_usec, d_dec_end.tv_sec, d_dec_end.tv_usec);
-        d_cost_time = d_dec_end.tv_sec - d_dec_start.tv_sec + (d_dec_end.tv_usec - d_dec_start.tv_usec) / 1000000.0;
-        fprintf(stderr, "cost time: %lf seconds\n", d_cost_time);
-    }
+    gettimeofday(&d_dec_end, NULL);
+    //fprintf(stdout, "%ld %ld %ld %ld \n", d_dec_start.tv_sec, d_dec_start.tv_usec, d_dec_end.tv_sec, d_dec_end.tv_usec);
+    d_cost_time = d_dec_end.tv_sec - d_dec_start.tv_sec + (d_dec_end.tv_usec - d_dec_start.tv_usec) / 1000000.0;
+    fprintf(stderr, "cost time: %lf seconds\n", d_cost_time);
     fprintf(stderr, "--------------------------------------------\n");
 
     return retVal;
